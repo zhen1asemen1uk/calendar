@@ -1,0 +1,13 @@
+.wrapp {
+	display: flex;
+	justify-content: space-around;
+	width: 100%;
+}
+
+.weekDay {
+	display: flex;
+	color: rgb(155, 150, 155);
+	width: 100%;
+	margin-right: 5px;
+	justify-content: flex-end;
+}
