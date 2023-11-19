@@ -7,8 +7,6 @@ export interface IAuthSlice {
 	passwordReset: { data: string; error: string };
 	isAuth: boolean;
 	isLoading: boolean;
-	isModal: boolean;
-	modalChildren: ReactNode | null;
 }
 
 export interface IUser {

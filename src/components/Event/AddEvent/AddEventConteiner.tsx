@@ -7,42 +7,29 @@ import { useAppDispatch } from "../../../hooks";
 import { IEvent } from "../../../reducers/eventReducer/type";
 
 interface IAddEventConteiner {
-	dte?: string;
+	date?: string;
+	closeModal: () => void;
 }
 
 const AddEventConteiner: FC<IAddEventConteiner> = (props) => {
-	const { dte } = props;
+	const { date, closeModal } = props;
 
 	const dispatch = useAppDispatch();
 
 	const [data, setData] = useState<IEvent>({
 		title: "",
 		desc: "",
-		date: dte
-			? moment(dte).format(`YYYY-MM-DD`)
-			: moment().format(`YYYY-MM-DD`),
-		time: moment().format("HH:mm"),
+		date: date || moment().unix().toString(),
+		created_at: moment().unix().toString(),
+		updated_at: moment().unix().toString(),
 	});
 
-	const addEvent = ({ title, desc, date, time }: IEvent) => {
-		dispatch(eventAPI.addEvent(title, desc, date, time));
+	const addEvent = ({ title, desc, date, created_at, updated_at }: IEvent) => {
+		dispatch(eventAPI.addEvent(title, desc, date, created_at, updated_at));
+		closeModal();
 	};
 
-	return (
-		<AddEvent
-			addEvent={addEvent}
-			data={data}
-			setData={setData}
-			// title={title}
-			// setTitle={setTitle}
-			// content={content}
-			// setContent={setContent}
-			// date={date}
-			// setDate={setDate}
-			// time={time}
-			// setTime={setTime}
-		/>
-	);
+	return <AddEvent addEvent={addEvent} data={data} setData={setData} />;
 };
 
 export default AddEventConteiner;

@@ -1,6 +1,15 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useMemo } from "react";
 import stl from "../Event.module.css";
 import { IEvent } from "../../../reducers/eventReducer/type";
+import moment from "moment";
+import styled from "styled-components";
+
+const DateText = styled.span`
+	font-size: 0.8rem;
+	color: #a8a8a8;
+	font-weight: 700;
+	margin: 0 auto 10px auto;
+`;
 
 interface IUpdateEvent {
 	data: IEvent;
@@ -12,12 +21,28 @@ interface IUpdateEvent {
 const UpdateEvent: FC<IUpdateEvent> = (props) => {
 	const { data, setData, updateEvent, deleteEvent } = props;
 
+	const date = useMemo(() => {
+		const showDate =
+			+data.created_at !== +data.updated_at
+				? `
+Updated at:
+${moment.unix(+data.updated_at).format(`DD.MM.YYYY HH:mm`)}`
+				: `
+Created at:
+${moment.unix(+data.created_at).format(`DD.MM.YYYY HH:mm`)}`;
+
+		return showDate;
+	}, [data.created_at, data.updated_at]);
+
 	return (
 		<>
+			<h3>Update event</h3>
+			<DateText>{date}</DateText>
 			<div className={stl.addEvent}>
 				<input
 					type='text'
 					placeholder='Title event'
+					autoFocus
 					autoComplete='off'
 					name='title'
 					id={stl.title}
@@ -42,21 +67,49 @@ const UpdateEvent: FC<IUpdateEvent> = (props) => {
 				<br />
 
 				<input
-					type='text'
+					type='date'
 					placeholder='DD.MM.YYYY'
 					autoComplete='off'
 					name='date'
 					id={stl.date}
-					value={data.date}
-					onChange={(e) => setData({ ...data, date: e.target.value })}
+					value={moment.unix(+data.date).format(`YYYY-MM-DD`)}
+					onChange={(e) =>
+						setData({ ...data, date: moment(e.target.value).unix().toString() })
+					}
+					className={`${stl.eventInp} ${stl.date}`}
+				/>
+				<br />
+
+				<input
+					type='time'
+					placeholder='DD.MM.YYYY'
+					autoComplete='off'
+					name='date'
+					id={stl.date}
+					value={moment.unix(+data.date).format(`HH:mm`)}
+					onChange={(e) => {
+						const time = e.target.value.split(":");
+						const hours = time[0];
+						const minutes = time[1];
+
+						setData({
+							...data,
+							date: moment
+								.unix(+data.date)
+								.add(hours, "hours")
+								.add(minutes, "minutes")
+								.unix()
+								.toString(),
+						});
+					}}
 					className={`${stl.eventInp} ${stl.date}`}
 				/>
 
 				<br />
-				{/* const updateEvent = ({ _id, title, desc, date, time }: IEvent) => { */}
+				{/* const updateEvent = ({ _id, title, desc, date }: IEvent) => { */}
 				{/* {date.match(/^([0-9]{2})\.([0-9]{2})\.([0-9]{4})$/) && */}
 				<div className={stl.btnWrapp}>
-					{data.desc.length > 0 && data.title.length > 0 ? (
+					{data.title.length > 0 ? (
 						<button
 							className={stl.btn}
 							onClick={() => {
@@ -65,7 +118,8 @@ const UpdateEvent: FC<IUpdateEvent> = (props) => {
 									title: data.title,
 									desc: data.desc,
 									date: data.date,
-									time: data.time,
+									created_at: data.created_at,
+									updated_at: moment().unix().toString(),
 								});
 							}}>
 							Update

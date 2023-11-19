@@ -11,6 +11,7 @@ export interface IEvent {
 	title: string;
 	desc: string;
 	date: string;
-	time: string;
 	_id?: string;
+	created_at: string;
+	updated_at: string;
 }

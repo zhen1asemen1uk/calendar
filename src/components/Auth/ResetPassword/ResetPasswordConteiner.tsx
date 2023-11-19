@@ -6,7 +6,9 @@ import Loading from "../Loading/Loading";
 import ResetPassword from "./ResetPassword";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 
-const ResetPasswordConteiner: FC = () => {
+const ResetPasswordConteiner: FC<{ closeModal: () => void }> = ({
+	closeModal,
+}) => {
 	const dispatch = useAppDispatch();
 
 	const authState = useAppSelector((state) => state.authState);
@@ -14,6 +16,7 @@ const ResetPasswordConteiner: FC = () => {
 
 	const password_reset = (login: string) => {
 		dispatch(authAPI.password_reset(login));
+		closeModal();
 	};
 
 	return (

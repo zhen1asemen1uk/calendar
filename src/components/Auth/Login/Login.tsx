@@ -1,24 +1,23 @@
-import React, { FC, ReactNode, useState } from "react";
+import { FC, useState } from "react";
 
-import ResetPasswordConteiner from "../ResetPassword/ResetPasswordConteiner";
 import stl from "./Login.module.css";
+import Modal from "../../Modal/Modal";
+import ResetPasswordConteiner from "../ResetPassword/ResetPasswordConteiner";
 
 interface ILogin {
 	sendLoginData: (login: string, password: string) => void;
 	authState: any;
-	isModalSet: (set: boolean, child: ReactNode | null) => void;
 }
 
 const Login: FC<ILogin> = (props) => {
-	const { sendLoginData, authState, isModalSet } = props;
+	const { sendLoginData, authState } = props;
 
 	const [login, setLogin] = useState("");
 	const [password, setPassword] = useState("");
-
+	const [modal, setModal] = useState(false);
 	return (
 		<>
 			<h1>Login 🚪</h1>
-
 			<div className={stl.wrappFormLog}>
 				<input
 					type='text'
@@ -48,13 +47,13 @@ const Login: FC<ILogin> = (props) => {
 				/>
 
 				<div className={stl.resetPass}>
-					<button
-						className={stl.btn}
-						onClick={() => {
-							isModalSet(true, <ResetPasswordConteiner />);
-						}}>
-						reset password?
+					<button className={stl.btn} onClick={() => setModal(true)}>
+						Reset password?
 					</button>
+
+					<Modal handleClose={() => setModal(false)} show={modal}>
+						<ResetPasswordConteiner closeModal={() => setModal(false)} />
+					</Modal>
 				</div>
 
 				<button
@@ -65,10 +64,8 @@ const Login: FC<ILogin> = (props) => {
 					Login
 				</button>
 
-				{typeof authState.user == "string" ? (
+				{typeof authState.user == "string" && (
 					<div className={stl.notification}>{authState.user}</div>
-				) : (
-					<></>
 				)}
 			</div>
 		</>

@@ -15,10 +15,12 @@ const AddEvent: FC<IAddEvent> = (props) => {
 
 	return (
 		<>
+			<h3>Add new Event</h3>
 			<div className={stl.addEvent}>
 				<input
 					type='text'
 					placeholder='Title event'
+					autoFocus
 					autoComplete='off'
 					name='title'
 					id={stl.title}
@@ -44,15 +46,15 @@ const AddEvent: FC<IAddEvent> = (props) => {
 
 				<input
 					type='date'
-					placeholder='DD.MM.YYYY'
+					placeholder={moment().format("yyyy-MM-dd")}
 					autoComplete='off'
 					name='date'
 					id={stl.date}
-					value={moment(data.date).format(`YYYY-MM-DD`)}
+					value={moment.unix(+data.date).format(`YYYY-MM-DD`)}
 					onChange={(e) =>
 						setData({
 							...data,
-							date: moment(e.target.value).format(`DD.MM.YYYY`),
+							date: moment(e.target.value).unix().toString(),
 						})
 					}
 					className={`${stl.eventInp} ${stl.date}`}
@@ -66,14 +68,28 @@ const AddEvent: FC<IAddEvent> = (props) => {
 					autoComplete='off'
 					name='date'
 					id={stl.date}
-					value={data.time}
-					onChange={(e) => setData({ ...data, time: e.target.value })}
+					value={moment.unix(+data.date).format("HH:mm")}
+					onChange={(e) => {
+						const time = e.target.value.split(":");
+						const hours = time[0];
+						const minutes = time[1];
+
+						setData({
+							...data,
+							date: moment
+								.unix(+data.date)
+								.add(hours, "hours")
+								.add(minutes, "minutes")
+								.unix()
+								.toString(),
+						});
+					}}
 					className={`${stl.eventInp} ${stl.date}`}
 				/>
 
 				<br />
 				{/* date.match(/^([0-9]{2})\.([0-9]{2})\.([0-9]{4})$/) && */}
-				{data.desc.length > 0 && data.title.length > 0 ? (
+				{data.title.length > 0 ? (
 					<button
 						className={stl.btn}
 						onClick={() => {

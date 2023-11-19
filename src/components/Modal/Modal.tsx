@@ -3,29 +3,22 @@ import { FC, ReactNode } from "react";
 import stl from "./Modal.module.css";
 
 interface IModal {
-	isModal: boolean;
-	isModalSet: (set: boolean, child: ReactNode | null) => void;
-	children: ReactNode | null;
+	handleClose: () => void;
+	show: boolean;
+	children: ReactNode;
 }
 
-const Modal: FC<IModal> = (props) => {
-	const { isModal, isModalSet, children } = props;
+const Modal: FC<IModal> = ({ handleClose, show, children }) => {
+	const showHideClassName = show ? `${stl.active}` : "";
 
 	return (
-		<div
-			className={isModal ? `${stl.modal} ${stl.active}` : stl.modal}
-			onClick={() => {
-				isModalSet(false, null);
-			}}>
-			<div
-				className={stl.modal_content}
-				onClick={(e) => {
-					e.stopPropagation();
-				}}>
+		<div className={`${stl.modal} ${showHideClassName}`} onClick={handleClose}>
+			<section
+				onClick={(e) => e.stopPropagation()}
+				className={stl.modal_content}>
 				{children}
-			</div>
+			</section>
 		</div>
 	);
 };
-
 export default Modal;

@@ -1,20 +1,16 @@
-import { FC, ReactNode } from "react";
+import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import AddEventConteiner from "../Event/AddEvent/AddEventConteiner";
-import LoginConteiner from "../Auth/Login/LoginConteiner";
-import RegisterConteiner from "../Auth/Register/RegisterConteiner";
-
-import Modal from "../Modal/Modal";
 import stl from "./HeaderBar.module.css";
 import { IUser } from "../../reducers/authReducer/type";
+import Modal from "../Modal/Modal";
+import RegisterConteiner from "../Auth/Register/RegisterConteiner";
+import LoginConteiner from "../Auth/Login/LoginConteiner";
+import AddEventConteiner from "../Event/AddEvent/AddEventConteiner";
 
 interface IHeaderBar {
-	isModal: boolean;
-	isModalSet: (set: boolean, child: ReactNode | null) => void;
 	search: string;
 	setSearch: (search: string) => void;
-	modalChildren: ReactNode | null;
 	isAuth: boolean;
 	logout: () => void;
 	user: IUser;
@@ -22,52 +18,55 @@ interface IHeaderBar {
 
 const API_URL = process.env.REACT_APP_HOST;
 
+const typeOfCalendar = [
+	{ path: "/day", name: "Day" },
+	{ path: "/week", name: "Week" },
+	{ path: "/month", name: "Month" },
+	{ path: "/year", name: "Year" },
+];
+
+const authBTN = [
+	{ path: "/register", name: "Register" },
+	{ path: "/login", name: "Login" },
+];
+
 const HeaderBar: FC<IHeaderBar> = (props) => {
+	const { search, setSearch, isAuth, logout, user } = props;
 	const navigate = useNavigate();
-	const {
-		isModal,
-		isModalSet,
-		search,
-		setSearch,
-		modalChildren,
-		isAuth,
-		logout,
-		user,
-	} = props;
+
+	const [modals, setModals] = useState<boolean[]>(authBTN.map(() => false));
+	const [addEventModal, setAddEventModal] = useState<boolean>(false);
 
 	return (
 		<div className={stl.wrapp}>
-			<Modal isModal={isModal} isModalSet={isModalSet}>
-				{modalChildren}
-			</Modal>
-
 			<div className={stl.oneBTN}>
-				<button
-					className={stl.btn}
-					onClick={() => {
-						isModalSet(true, <AddEventConteiner />);
-					}}>
+				<button className={stl.btn} onClick={() => setAddEventModal(true)}>
 					+
 				</button>
+				<Modal
+					handleClose={() => {
+						setAddEventModal(false);
+					}}
+					show={addEventModal}>
+					<AddEventConteiner closeModal={() => setAddEventModal(false)} />
+				</Modal>
 			</div>
 
 			<div className={stl.fourBTN}>
 				<div className={stl.fourBTN}>
-					<button onClick={() => navigate("/day")} className={stl.btn}>
-						Day
-					</button>
-					<button onClick={() => navigate("/week")} className={stl.btn}>
-						Week
-					</button>
-					<button onClick={() => navigate("/month")} className={stl.btn}>
-						Month
-					</button>
-					<button onClick={() => navigate("/year")} className={stl.btn}>
-						Year
-					</button>
+					{typeOfCalendar.map((link) => (
+						<button
+							key={link.name}
+							onClick={() => navigate(link.path)}
+							className={stl.btn}>
+							{link.name}
+						</button>
+					))}
 				</div>
 			</div>
-			<div className={stl.HEIGHT}></div>
+
+			<div className={stl.HEIGHT} />
+
 			<div className={stl.wrappINP}>
 				<input
 					type='search'
@@ -102,20 +101,36 @@ const HeaderBar: FC<IHeaderBar> = (props) => {
 				</div>
 			) : (
 				<div className={`${stl.auth} ${stl.oneBTN}`}>
-					<button
-						className={stl.btn}
-						onClick={() => {
-							isModalSet(true, <RegisterConteiner />);
-						}}>
-						register
-					</button>
-					<button
-						className={stl.btn}
-						onClick={() => {
-							isModalSet(true, <LoginConteiner />);
-						}}>
-						login
-					</button>
+					{authBTN.map((link, i) => (
+						<button
+							key={link.name}
+							onClick={() => {
+								const newModals = modals.map((_, idx) =>
+									i === idx ? (modals[i] = true) : (modals[i] = false)
+								);
+
+								setModals(newModals);
+							}}
+							className={stl.btn}>
+							{link.name}
+						</button>
+					))}
+
+					<Modal
+						handleClose={() => {
+							setModals(modals.map(() => false));
+						}}
+						show={modals[0]}>
+						<RegisterConteiner />
+					</Modal>
+
+					<Modal
+						handleClose={() => {
+							setModals(modals.map(() => false));
+						}}
+						show={modals[1]}>
+						<LoginConteiner />
+					</Modal>
 				</div>
 			)}
 		</div>

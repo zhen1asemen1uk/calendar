@@ -13,16 +13,31 @@ const ControlBarConteiner = () => {
 	const dispatch = useAppDispatch();
 	const { today } = useAppSelector((state) => state.monthState);
 
+	// TO DO: need refactoring these handlers (temporary solution)
 	const prevHandler = () => {
-		dispatch(prevMonth(today.clone().subtract(1, "month")));
+		dispatch(
+			prevMonth(
+				moment.unix(+today).clone().subtract(1, "month").unix().toString()
+			)
+		);
 	};
 
 	const todayHandler = () => {
-		dispatch(todayMonth(moment()));
+		dispatch(todayMonth(moment().unix().toString()));
 	};
 
 	const nextHandler = () => {
-		dispatch(nextMonth(today.clone().add(1, "month")));
+		dispatch(
+			nextMonth(moment.unix(+today).clone().add(1, "month").unix().toString())
+		);
+	};
+
+	const changeDateHandler = (date: string) => {
+		if (!date) return localStorage.removeItem("dateFilter");
+
+		const unixTimestamp = moment(date, "YYYY-MM-DD").unix();
+
+		dispatch(nextMonth(unixTimestamp.toString()));
 	};
 
 	return (
@@ -32,6 +47,7 @@ const ControlBarConteiner = () => {
 				prevHandler={prevHandler}
 				todayHandler={todayHandler}
 				nextHandler={nextHandler}
+				changeDateHandler={changeDateHandler}
 			/>
 		</div>
 	);

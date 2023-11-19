@@ -32,7 +32,7 @@ export const authAPI = {
 
 				return dispatch(register(dataRegister.data));
 			} catch (error) {
-				console.log(`Error register ${error}`);
+				console.error(`Error register ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -47,10 +47,10 @@ export const authAPI = {
 					login: loginName,
 					password: password,
 				});
-				// console.log(dataLogin.data.user.id);
+
 				return dispatch(login(dataLogin.data));
 			} catch (error) {
-				console.log(`Error login ${error}`);
+				console.error(`Error login ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -65,7 +65,7 @@ export const authAPI = {
 				// return dispatch(verify(dataLogin ));
 				return dispatch(login(dataLogin.data));
 			} catch (error) {
-				console.log(`Error login ${error}`);
+				console.error(`Error login ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -84,7 +84,7 @@ export const authAPI = {
 
 				return dispatch(password_reset(resetData));
 			} catch (error) {
-				console.log(`Error login ${error}`);
+				console.error(`Error login ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -102,7 +102,7 @@ export const authAPI = {
 				});
 				return dispatch(password_reset(resetData));
 			} catch (error) {
-				console.log(`Error login ${error}`);
+				console.error(`Error login ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -119,7 +119,7 @@ export const authAPI = {
 
 				return dispatch(logout());
 			} catch (error) {
-				console.log(`Error logout ${error}`);
+				console.error(`Error logout ${error}`);
 			} finally {
 				dispatch(isLoading(false));
 			}
@@ -141,7 +141,7 @@ export const authAPI = {
 				const obj = JSON.stringify(check.data.user);
 				localStorage.setItem("userData", obj);
 			} catch (error) {
-				console.log(`Error check refresh ${error}`);
+				console.error(`Error check refresh ${error}`);
 			}
 		};
 	},

@@ -1,8 +1,7 @@
-import moment from "moment";
 import api from ".";
 
-import { isLoading, isModal } from "../reducers/authReducer/authSlice";
-import { todayMonth } from "../reducers/monthSlice/monthSlice";
+import { isLoading } from "../reducers/authReducer/authSlice";
+
 import {
 	addEvent,
 	deleteEvent,
@@ -16,8 +15,10 @@ import {
 import { AppDispatch } from "../reducers/store";
 import {
 	addEventToStorage,
+	deleteEventFromStorage,
 	getEventByIDFromStorage,
 	getEventsFromStorage,
+	searchEventFromStorage,
 	updateEventToStorage,
 } from "../helpers/events";
 
@@ -81,15 +82,29 @@ export const eventAPI = {
 			} catch (error) {
 				console.error(error);
 
-				const events = getEventsFromStorage();
+				const events = getEventsFromStorage(gte, lte);
+
 				return dispatch(getEventByUserIDAndTime(events));
 			} finally {
 				dispatch(isLoading(false));
 			}
 		};
 	},
-	addEvent(title: string, desc: string, date: string, time: string) {
-		addEventToStorage({ title, desc, date, time });
+	addEvent(
+		title: string,
+		desc: string,
+		date: string,
+		created_at: string,
+		updated_at: string
+	) {
+		const newEventLS = addEventToStorage({
+			title,
+			desc,
+			date,
+			created_at,
+			updated_at,
+		});
+		// TO DO: need transform date to unix and UTC!!!
 
 		return async (dispatch: AppDispatch) => {
 			try {
@@ -98,14 +113,14 @@ export const eventAPI = {
 					title,
 					desc,
 					date,
-					time,
 				});
 
 				return dispatch(addEvent(newEvent.data));
 			} catch (error) {
 				console.error(error);
+
+				return dispatch(addEvent(newEventLS));
 			} finally {
-				dispatch(isModal(false));
 				dispatch(isLoading(false));
 			}
 		};
@@ -115,30 +130,42 @@ export const eventAPI = {
 		title: string,
 		desc: string,
 		date: string,
-		time: string
+		created_at: string,
+		updated_at: string
 	) {
 		return async (dispatch: AppDispatch) => {
-			updateEventToStorage({ _id, title, desc, date, time });
+			updateEventToStorage({ _id, title, desc, date, created_at, updated_at });
+
 			try {
 				dispatch(isLoading(true));
 				const dataEvents = await api.patch(`/api/event/${_id}`, {
-					title: title,
-					desc: desc,
-					date: date,
-					time: time,
+					title,
+					desc,
+					date,
+					created_at,
+					updated_at,
 				});
 
 				return dispatch(updateEvent(dataEvents.data));
 			} catch (error) {
 				console.error(error);
+
+				const updatedEvent = updateEventToStorage({
+					_id,
+					title,
+					desc,
+					date,
+					created_at,
+					updated_at,
+				});
+
+				return dispatch(updateEvent(updatedEvent));
 			} finally {
-				dispatch(todayMonth(moment(date, "DD.MM.YYYY")));
-				dispatch(isModal(false));
 				dispatch(isLoading(false));
 			}
 		};
 	},
-	deleteEvent(id: string, date: string) {
+	deleteEvent(id: string) {
 		return async (dispatch: AppDispatch) => {
 			try {
 				dispatch(isLoading(true));
@@ -146,9 +173,10 @@ export const eventAPI = {
 				return dispatch(deleteEvent(deletedEvent.data));
 			} catch (error) {
 				console.error(error);
+
+				const deletedEvent = deleteEventFromStorage(id);
+				return dispatch(deleteEvent(deletedEvent));
 			} finally {
-				dispatch(todayMonth(moment(date, "DD.MM.YYYY")));
-				dispatch(isModal(false));
 				dispatch(isLoading(false));
 			}
 		};
@@ -161,6 +189,9 @@ export const eventAPI = {
 				return dispatch(search(data));
 			} catch (error) {
 				console.error(error);
+
+				const res = searchEventFromStorage(data);
+				return dispatch(search(res));
 			} finally {
 				dispatch(isLoading(false));
 			}

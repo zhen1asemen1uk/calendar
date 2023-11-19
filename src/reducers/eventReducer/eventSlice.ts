@@ -29,11 +29,11 @@ const eventsSlice = createSlice({
 			const eventDataForMonth = state.eventDataForMonth;
 			state.eventDataForMonth = [...eventDataForMonth, { ...action.payload }];
 		},
-		updateEvent(state, action) {
-			state.eventsData = action.payload;
+		updateEvent(state, action: PayloadAction<IEvent[]>) {
+			state.eventDataForMonth = action.payload;
 		},
-		deleteEvent(state, action) {
-			state.eventsData = action.payload;
+		deleteEvent(state, action: PayloadAction<IEvent[]>) {
+			state.eventDataForMonth = action.payload;
 		},
 		search(state, action) {
 			const title = state.eventsData.filter((word) => {

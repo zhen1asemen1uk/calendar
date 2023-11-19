@@ -7,8 +7,6 @@ export const initialState: IAuthSlice = {
 	passwordReset: { data: "", error: "" },
 	isAuth: false,
 	isLoading: false,
-	isModal: false,
-	modalChildren: null,
 };
 
 const authSlice = createSlice({
@@ -18,7 +16,6 @@ const authSlice = createSlice({
 		register(state, action) {
 			if (typeof action.payload == "object") {
 				state.user = action.payload.user;
-				state.isModal = false;
 			} else {
 				state.user = action.payload;
 			}
@@ -31,7 +28,6 @@ const authSlice = createSlice({
 			localStorage.setItem("userData", obj);
 
 			state.isAuth = true;
-			state.isModal = false;
 
 			state.user = action.payload.user;
 			// } else {
@@ -68,12 +64,6 @@ const authSlice = createSlice({
 		isLoading(state, action) {
 			state.isLoading = action.payload;
 		},
-		isModal(state, action) {
-			state.isModal = action.payload;
-		},
-		modalChildren(state, action) {
-			state.modalChildren = action.payload;
-		},
 	},
 });
 
@@ -85,8 +75,6 @@ export const {
 	password_reset_link,
 	logout,
 	isLoading,
-	isModal,
-	modalChildren,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { RouterProvider } from "react-router-dom";
 import styled from "styled-components";
+import moment from "moment";
 
-import { authAPI } from "./API/authAPI";
 import { router } from "./routes/rootRouters";
 
-import { useAppSelector } from "./hooks";
+// import { authAPI } from "./API/authAPI";
+// import { useAppSelector } from "./hooks";
+
+moment.updateLocale("en", { week: { dow: 1 } }); // for start week from monday
 
 const Conteiner = styled.div`
 	display: flex;
@@ -36,30 +39,30 @@ const Wrapp = styled.div`
 `;
 
 const App: React.FC = () => {
-	const { authState } = useAppSelector((store) => store);
+	// const { authState } = useAppSelector((store) => store);
 
-	//for true auth status
-	if (
-		localStorage.getItem(`token`) &&
-		localStorage.getItem(`token`) !== "undefined"
-	) {
-		authState.isAuth = true;
-	}
+	// //for true auth status
+	// if (
+	// 	localStorage.getItem(`token`) &&
+	// 	localStorage.getItem(`token`) !== "undefined"
+	// ) {
+	// 	authState.isAuth = true;
+	// }
 
-	//for save avatar after refresh page
-	if (
-		localStorage.getItem(`userData`) &&
-		localStorage.getItem(`userData`) !== "undefined"
-	) {
-		const obj = JSON.parse(localStorage.getItem(`userData`) || "{}");
-		authState.user = obj;
-	}
+	// //for save avatar after refresh page
+	// if (
+	// 	localStorage.getItem(`userData`) &&
+	// 	localStorage.getItem(`userData`) !== "undefined"
+	// ) {
+	// 	const obj = JSON.parse(localStorage.getItem(`userData`) || "{}");
+	// 	authState.user = obj;
+	// }
 
-	useEffect(() => {
-		if (localStorage.getItem(`token`)) {
-			authAPI.checkAuth();
-		}
-	}, [authState]);
+	// useEffect(() => {
+	// 	if (localStorage.getItem(`token`)) {
+	// 		authAPI.checkAuth();
+	// 	}
+	// }, [authState]);
 
 	return (
 		<Conteiner>

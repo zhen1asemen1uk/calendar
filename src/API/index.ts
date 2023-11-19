@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
 				return api.request(originalReq);
 			} catch (error) {
-				console.log("Not auth! Error:" + error);
+				console.error("Not auth! Error:" + error);
 			}
 		}
 		throw error;
